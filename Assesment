@@ -6,8 +6,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
 contract DegenToken is ERC20, Ownable, ERC20Burnable {
-    constructor() ERC20("Degen", "DGN") {
+    constructor() ERC20("Degen", "DGN") Ownable() {
         // Initialize the contract with the initial owner as the caller of the contract
+        _mint(msg.sender, 1000000 * 10 ** uint(decimals()));
     }
 
     function decimals() public pure override returns (uint8) {
@@ -19,12 +20,13 @@ contract DegenToken is ERC20, Ownable, ERC20Burnable {
     }
 
     function transferTokens(address receiver, uint256 value) external {
-        require(balanceOf(msg.sender) >= value, "You do not have enough Degen Tokens");
-        transfer(receiver, value);
+        require(balanceOf(msg.sender) >= value, "Insufficient Degen Tokens balance");
+        _approve(msg.sender, receiver, value);
+        _transfer(msg.sender, receiver, value);
     }
 
     function burnTokens(uint256 _value) external {
-        require(balanceOf(msg.sender) >= _value, "You do not have enough Degen Tokens");
-        burn(_value);
+        require(balanceOf(msg.sender) >= _value, "Insufficient Degen Tokens balance");
+        _burn(msg.sender, _value);
     }
 }
