@@ -1,0 +1,30 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.9;
+
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+
+contract DegenToken is ERC20, Ownable, ERC20Burnable {
+    constructor() ERC20("Degen", "DGN") {
+        // Initialize the contract with the initial owner as the caller of the contract
+    }
+
+    function decimals() public pure override returns (uint8) {
+        return 0;
+    }
+
+    function getBalance() external view returns (uint256) {
+        return balanceOf(msg.sender);
+    }
+
+    function transferTokens(address receiver, uint256 value) external {
+        require(balanceOf(msg.sender) >= value, "You do not have enough Degen Tokens");
+        transfer(receiver, value);
+    }
+
+    function burnTokens(uint256 _value) external {
+        require(balanceOf(msg.sender) >= _value, "You do not have enough Degen Tokens");
+        burn(_value);
+    }
+}
